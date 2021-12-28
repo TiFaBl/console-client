@@ -430,7 +430,8 @@ static void psync_row_to_folder_stat(psync_variant_row row, struct FUSE_STAT *st
   stbuf->st_ctime=mtime;
   stbuf->st_mtime=mtime;
   stbuf->st_atime=mtime;
-  stbuf->st_mode=S_IFDIR | 0755;
+  //  stbuf->st_mode=S_IFDIR | 0755;
+  stbuf->st_mode=S_IFDIR | 0750;
   stbuf->st_nlink=psync_get_number(row[4])+2;
   stbuf->st_size=FS_BLOCK_SIZE;
 #if defined(P_OS_POSIX)
@@ -454,7 +455,8 @@ static void psync_row_to_file_stat(psync_variant_row row, struct FUSE_STAT *stbu
   stbuf->st_ctime=psync_get_number(row[3]);
   stbuf->st_mtime=stbuf->st_ctime;
   stbuf->st_atime=stbuf->st_ctime;
-  stbuf->st_mode=S_IFREG | 0644;
+  /* stbuf->st_mode=S_IFREG | 0644; */
+  stbuf->st_mode=S_IFREG | 0640;
   stbuf->st_nlink=1;
   stbuf->st_size=size;
 #if defined(P_OS_POSIX)
@@ -484,7 +486,8 @@ static void psync_mkdir_to_folder_stat(psync_fstask_mkdir_t *mk, struct FUSE_STA
   stbuf->st_ctime=mtime;
   stbuf->st_mtime=mtime;
   stbuf->st_atime=mtime;
-  stbuf->st_mode=S_IFDIR | 0755;
+  //  stbuf->st_mode=S_IFDIR | 0755;
+  stbuf->st_mode=S_IFDIR | 0750;
   stbuf->st_nlink=mk->subdircnt+2;
   stbuf->st_size=FS_BLOCK_SIZE;
 #if defined(P_OS_POSIX)
@@ -518,7 +521,8 @@ static int psync_creat_stat_fake_file(struct FUSE_STAT *stbuf){
   stbuf->st_ctime=ctime;
   stbuf->st_mtime=ctime;
   stbuf->st_atime=ctime;
-  stbuf->st_mode=S_IFREG | 0644;
+  // stbuf->st_mode=S_IFREG | 0644;
+  stbuf->st_mode=S_IFREG | 0640;
   stbuf->st_nlink=1;
   stbuf->st_size=0;
 #if defined(P_OS_POSIX)
@@ -635,7 +639,8 @@ static int psync_creat_local_to_file_stat(psync_fstask_creat_t *cr, struct FUSE_
   stbuf->st_mtime=psync_stat_mtime(&st);
   stbuf->st_ctime=stbuf->st_mtime;
   stbuf->st_atime=stbuf->st_mtime;
-  stbuf->st_mode=S_IFREG | 0644;
+  /* stbuf->st_mode=S_IFREG | 0644; */
+  stbuf->st_mode=S_IFREG | 0640;
   stbuf->st_nlink=1;
   if (folderflags&PSYNC_FOLDER_FLAG_ENCRYPTED){
     if (fill_stat_from_open_file(cr->fileid, stbuf))
@@ -669,7 +674,8 @@ static int psync_creat_static_to_file_stat(psync_fstask_creat_t *cr, struct FUSE
   stbuf->st_ctime=lc->ctime;
   stbuf->st_mtime=lc->ctime;
   stbuf->st_atime=lc->ctime;
-  stbuf->st_mode=S_IFREG | 0644;
+  /* stbuf->st_mode=S_IFREG | 0644; */
+  stbuf->st_mode=S_IFREG | 0640;
   stbuf->st_nlink=1;
   stbuf->st_size=lc->datalen;
 #if defined(P_OS_POSIX)
@@ -3415,6 +3421,7 @@ static int psync_fs_do_start(){
 #if defined(P_OS_LINUX)
   fuse_opt_add_arg(&args, "argv");
   fuse_opt_add_arg(&args, "-oauto_unmount");
+//  fuse_opt_add_arg(&args, "-odefault_permissions");
 //  fuse_opt_add_arg(&args, "-ouse_ino");
   fuse_opt_add_arg(&args, "-ofsname="DEFAULT_FUSE_MOUNT_POINT".fs");
   if (!is_fuse3_installed_on_system()) {
